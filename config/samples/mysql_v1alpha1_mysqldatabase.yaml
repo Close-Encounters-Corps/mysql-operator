@@ -1,0 +1,7 @@
+apiVersion: mysql.closeencounterscorps.org/v1alpha1
+kind: MysqlDatabase
+metadata:
+  name: mysqldatabase-sample
+spec:
+  # Add fields here
+  foo: bar

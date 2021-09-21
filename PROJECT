@@ -1,0 +1,19 @@
+domain: closeencounterscorps.org
+layout:
+- go.kubebuilder.io/v3
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}
+projectName: mysql-operator
+repo: github.com/Close-Encounters-Corps/mysql-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: closeencounterscorps.org
+  group: mysql
+  kind: MysqlDatabase
+  path: github.com/Close-Encounters-Corps/mysql-operator/api/v1alpha1
+  version: v1alpha1
+version: "3"
