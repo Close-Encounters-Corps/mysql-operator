@@ -11,7 +11,7 @@ type MysqlDatabaseSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	Database string `json:"name"`
-	User     string `json:"string"`
+	User     string `json:"user"`
 	Password string `json:"password"`
 
 	// Foo is an example field of MysqlDatabase. Edit mysqldatabase_types.go to remove/update

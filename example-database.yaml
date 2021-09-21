@@ -1,0 +1,9 @@
+---
+apiVersion: mysql.closeencounterscorps.org/v1alpha1
+kind: MysqlDatabase
+metadata:
+  name: mysqldatabase-sample
+spec:
+  name: database
+  user: user
+  password: "12345678"

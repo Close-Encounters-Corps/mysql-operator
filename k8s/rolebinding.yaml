@@ -13,4 +13,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: mysql-operator
-  namespace: system
+  namespace: "${var.namespace}"

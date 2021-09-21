@@ -1,4 +1,5 @@
 package controllers
+
 /*
 MIT License
 
@@ -25,6 +26,7 @@ SOFTWARE.
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -73,15 +75,26 @@ func (r *MysqlDatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 		return ctrl.Result{}, nil
 	}
 	before := instance.DeepCopy()
-	instance.Status.LastVisited = v1.NewTime(time.Now())
+	instance.Status = mysqlv1alpha1.MysqlDatabaseStatus{
+		LastVisited: v1.NewTime(time.Now()),
+		Succeeded: false,
+	}
 	// has non-zero deletion timestamp? drop database!
 	if !instance.GetDeletionTimestamp().IsZero() {
-		if instance.Status.Succeeded {
+		if before.Status.Succeeded {
 			err = r.DbConn.DropDatabase(instance.Spec.Database, instance.Spec.User)
 			if err != nil {
 				return ctrl.Result{}, err
 			}
 		}
+		instance.SetFinalizers(nil)
+		instance.Status.Succeeded = true
+		err = r.Update(ctx, instance)
+		err = r.Status().Update(ctx, instance)
+		return ctrl.Result{}, err
+	}
+	l.Info(fmt.Sprintf("previous action on resource successed? %v", before.Status.Succeeded))
+	if before.Status.Succeeded {
 		return ctrl.Result{}, nil
 	}
 	// never visited? create database!
@@ -90,7 +103,19 @@ func (r *MysqlDatabaseReconciler) Reconcile(ctx context.Context, req ctrl.Reques
 		if err != nil {
 			return ctrl.Result{}, err
 		}
-		return ctrl.Result{}, nil
+		if len(instance.Finalizers) < 1 && instance.GetDeletionTimestamp() == nil {
+			l.Info("adding finalizer for MySQL")
+			instance.SetFinalizers([]string{"finalizer.mysql.closeencounterscorps.org"})
+		}
+		instance.Status.Succeeded = true
+		err = r.Update(ctx, instance)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		err = r.Status().Update(ctx, instance)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 	}
 	return ctrl.Result{}, nil
 }
