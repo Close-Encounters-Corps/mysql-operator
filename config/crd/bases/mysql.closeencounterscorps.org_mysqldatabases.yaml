@@ -1,0 +1,72 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.1
+  creationTimestamp: null
+  name: mysqldatabases.mysql.closeencounterscorps.org
+spec:
+  group: mysql.closeencounterscorps.org
+  names:
+    kind: MysqlDatabase
+    listKind: MysqlDatabaseList
+    plural: mysqldatabases
+    singular: mysqldatabase
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: MysqlDatabase is the Schema for the mysqldatabases API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: MysqlDatabaseSpec defines the desired state of MysqlDatabase
+            properties:
+              name:
+                type: string
+              password:
+                type: string
+              string:
+                type: string
+            required:
+            - name
+            - password
+            - string
+            type: object
+          status:
+            description: MysqlDatabaseStatus defines the observed state of MysqlDatabase
+            properties:
+              last_visited:
+                format: date-time
+                type: string
+              succeeded:
+                type: boolean
+            required:
+            - last_visited
+            - succeeded
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

@@ -1,0 +1,34 @@
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - mysql.closeencounterscorps.org
+  resources:
+  - mysqldatabases
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - mysql.closeencounterscorps.org
+  resources:
+  - mysqldatabases/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - mysql.closeencounterscorps.org
+  resources:
+  - mysqldatabases/status
+  verbs:
+  - get
+  - patch
+  - update
