@@ -7,6 +7,9 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.6.1
   creationTimestamp: null
   name: mysqldatabases.mysql.closeencounterscorps.org
+  labels:
+    tier: operator
+    app: mysql-operator
 spec:
   group: mysql.closeencounterscorps.org
   names:

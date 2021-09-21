@@ -15,7 +15,7 @@ type Connection struct {
 }
 
 func MysqlConnection(cfg *config.MysqlCfg) Connection {
-	db, err := sql.Open("mysql", fmt.Sprintf("%s;%s@%s/%s?%s",
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?%s",
 		cfg.User,
 		cfg.Password,
 		cfg.Host,

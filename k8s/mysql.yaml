@@ -1,0 +1,83 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-operator
+  namespace: ${var.namespace}
+  labels:
+    tier: operator
+    app: mysql-operator
+spec:
+  selector:
+    matchLabels:
+      tier: operator
+      app: mysql-operator
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        tier: operator
+        app: mysql-operator
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+      - image: "${var.registry}/mysql-operator:${var.tag}"
+        name: mysql-operator
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: mysql-operator-conn
+              key: host
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: mysql-operator-conn
+              key: user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-operator-conn
+              key: password
+        - name: MYSQL_URI_ARGS
+          valueFrom:
+            secretKeyRef:
+              name: mysql-operator-conn
+              key: uri_args
+        - name: MYSQL_DEFAULT_DB
+          valueFrom:
+            secretKeyRef:
+              name: mysql-operator-conn
+              key: uri_args
+        %{~ for k,v in entrypoint.env ~}
+        - name: "${k}"
+          value: "${v}"
+        %{~ endfor ~}
+        - name: PORT
+          value: "8081"
+        securityContext:
+          allowPrivilegeEscalation: false
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          limits:
+            cpu: 200m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 20Mi
+      serviceAccountName: mysql-operator
+      terminationGracePeriodSeconds: 10
+      imagePullSecrets:
+      - name: operator-registry
